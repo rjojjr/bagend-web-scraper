@@ -1,10 +1,16 @@
 ﻿using System;
+using bagend_web_scraper.StockMarket.Service;
+
 namespace bagend_web_scraper.StockMarket.Client
 {
 	public class PolygonApiResponseProcessor
 	{
-		public PolygonApiResponseProcessor()
+
+		private readonly DateProvider _dateProvider;
+
+		public PolygonApiResponseProcessor(DateProvider dateProvider)
 		{
+			_dateProvider = dateProvider;
 		}
 
 		public EventRequest ProcessPolygonOpenCloseResponse(PolygonOpenCloseApiResponse response)
@@ -18,7 +24,7 @@ namespace bagend_web_scraper.StockMarket.Client
 			return eventRequest;
 		}
 
-		private static IList<EventAttribute> BuildEventAttributes(PolygonOpenCloseApiResponse response)
+		private IList<EventAttribute> BuildEventAttributes(PolygonOpenCloseApiResponse response)
 		{
 			var attributes = new List<EventAttribute>();
 			attributes.Add(new EventAttribute("AfterHours", response.AfterHours.ToString()));
@@ -29,6 +35,7 @@ namespace bagend_web_scraper.StockMarket.Client
             attributes.Add(new EventAttribute("Volume", response.Volume.ToString()));
             attributes.Add(new EventAttribute("Symbol", response.Symbol.ToString()));
             attributes.Add(new EventAttribute("Date", response.From.ToString()));
+			attributes.Add(new EventAttribute("DayOfWeek", _dateProvider.GetDayOfWeek(response.From.ToString())));
 
             return attributes;
 		}

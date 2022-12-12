@@ -33,7 +33,14 @@ namespace bagend_web_scraper.StockMarket.Service
 			return dates;
         }
 
-		private DateTime GetDateTimeFromString(string date)
+        public string GetDayOfWeek(string date)
+        {
+            DateTime dt = GetDateTimeFromString(date);
+
+            return dt.DayOfWeek.ToString();
+        }
+
+        private DateTime GetDateTimeFromString(string date)
 		{
 			var parts = date.Split("-");
 			var year = Int32.Parse(parts[0]);
@@ -55,7 +62,7 @@ namespace bagend_web_scraper.StockMarket.Service
 			return dt.DayOfWeek != DayOfWeek.Saturday && dt.DayOfWeek != DayOfWeek.Sunday;
         }
 
-		private static string padNumber(int num)
+        private static string padNumber(int num)
 		{
 			return num < 10 ? "0" + num : "" + num;
 		}
