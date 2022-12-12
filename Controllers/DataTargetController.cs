@@ -14,16 +14,16 @@ namespace bagend_web_scraper.Controllers
 
         private readonly ILogger<DataTargetController> _logger;
 		private TickerDataTargetService _tickerDataTargetService;
-		private readonly OpenCloseStockDataScraper _openCloseStockDataScraper;
+		private readonly StockDataScraper _stockDataScraper;
 
 
         public DataTargetController(ILogger<DataTargetController> logger,
             TickerDataTargetService tickerDataTargetService,
-            OpenCloseStockDataScraper openCloseStockDataScraper)
+            StockDataScraper openCloseStockDataScraper)
 		{
 			_logger = logger;
 			_tickerDataTargetService = tickerDataTargetService;
-            _openCloseStockDataScraper = openCloseStockDataScraper;
+            _stockDataScraper = openCloseStockDataScraper;
         }
 
         [HttpPost]
@@ -38,7 +38,7 @@ namespace bagend_web_scraper.Controllers
         public void RestartDataOperations()
         {
             _logger.LogInformation("received request to restart ticker data operations");
-            _openCloseStockDataScraper.RestartOperationsQueue();
+            _stockDataScraper.RestartScraperThread();
         }
     }
 }

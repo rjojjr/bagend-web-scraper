@@ -52,6 +52,23 @@ namespace bagend_web_scraper.StockMarket.Service
             _scraperThread.Start();
 		}
 
+        public void RestartScraperThread()
+        {
+            _logger.LogInformation("restarting scrapper thread");
+            StopScraperThread();
+            RunScraperThread();
+        }
+
+        private void StopScraperThread()
+        {
+            if(_scraperThread != null)
+            {
+                _logger.LogInformation("stopping scraper thread");
+                _scraperThread.Abort();
+                _scraperThread = null;
+            }
+        }
+
 
         public void  ScrapeOpenCloseStockData(TickerDataTargetEntity entity)
         {

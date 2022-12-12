@@ -52,7 +52,7 @@ namespace bagend_web_scraper.StockMarket.Operations
             if (_processingThread != null)
             {
                 _logger.LogInformation("stopping operation processing thread");
-                _processingThread.Interrupt();
+                
             }
         }
 
