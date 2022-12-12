@@ -11,6 +11,8 @@ namespace bagend_web_scraper.StockMarket.Model
 
         public string TickerSymbol { get; set; } = null!;
 
+        public string CompanyName { get; set; } = null!;
+
         public string BusinessSector { get; set; } = null!;
 
         public bool IsStarted { get; set; } = false;
@@ -35,6 +37,7 @@ namespace bagend_web_scraper.StockMarket.Model
             tickerTarget.Id = entity.Id;
             tickerTarget.Priority = entity.Priority;
             tickerTarget.TickerSymbol = entity.TickerSymbol;
+            tickerTarget.CompanyName = entity.CompanyName;
             tickerTarget.BusinessSector = entity.BusinessSector;
             tickerTarget.IsStarted = entity.IsStarted;
             tickerTarget.IsCompleted = entity.IsCompleted;

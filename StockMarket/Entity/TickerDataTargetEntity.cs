@@ -17,6 +17,8 @@ namespace bagend_web_scraper.StockMarket.Entity
 
         public string TickerSymbol { get; set; } = null!;
 
+        public string CompanyName { get; set; } = null!;
+
         public string BusinessSector { get; set; } = null!;
 
         public bool IsStarted { get; set; } = false;

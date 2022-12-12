@@ -61,6 +61,7 @@ namespace bagend_web_scraper.StockMarket.Service
 			var entity = new TickerDataTargetEntity();
 			entity.Priority = request.Priority;
 			entity.BusinessSector = request.BusinessSector;
+			entity.CompanyName = request.CompanyName;
 			entity.TickerSymbol = request.TickerSymbol;
 
 			return entity;

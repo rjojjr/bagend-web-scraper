@@ -9,7 +9,7 @@ namespace bagend_web_scraper.StockMarket.Service
 	public class StockDataScraper
 	{
 
-		private const string _startDate = "2019-12-31";
+		private const string _startDate = "2021-12-31";
 
         private readonly OpenCloseStockDataScraper _openCloseStockDataScraper;
 		private readonly DateProvider _dateProvider;
