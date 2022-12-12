@@ -64,7 +64,7 @@ namespace bagend_web_scraper.StockMarket.Service
             if(_scraperThread != null)
             {
                 _logger.LogInformation("stopping scraper thread");
-                _scraperThread.Abort();
+                _scraperThread.Interrupt();
                 _scraperThread = null;
             }
         }
