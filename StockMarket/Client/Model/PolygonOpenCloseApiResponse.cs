@@ -26,6 +26,9 @@ namespace bagend_web_scraper.StockMarket.Client
         [JsonPropertyName("symbol")]
         public string Symbol { get; set; } = null!;
 
+        [JsonPropertyName("from")]
+        public string From { get; set; } = null!;
+
         public PolygonOpenCloseApiResponse()
 		{
 		}
