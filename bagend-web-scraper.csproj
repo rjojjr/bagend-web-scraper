@@ -12,7 +12,29 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
+    <PackageReference Include="RestSharp" Version="109.0.0-preview.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="StockMarket\Model\" />
+    <None Remove="StockMarket\Repository\" />
+    <None Remove="StockMarket\Service\" />
+    <None Remove="Timer\" />
+    <None Remove="StockMarket\Client\" />
+    <None Remove="StockMarket\Client\Model\" />
+    <None Remove="StockMarket\OpenClose\" />
+    <None Remove="StockMarket\Operations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="StockMarket\Model\" />
+    <Folder Include="StockMarket\Repository\" />
+    <Folder Include="StockMarket\Service\" />
+    <Folder Include="Timer\" />
+    <Folder Include="StockMarket\Client\" />
+    <Folder Include="StockMarket\Client\Model\" />
+    <Folder Include="StockMarket\OpenClose\" />
+    <Folder Include="StockMarket\Operations\" />
+  </ItemGroup>
 </Project>
