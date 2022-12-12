@@ -22,8 +22,13 @@ namespace bagend_web_scraper.StockMarket.Service
 			var currentDate = GetNextDateString(date);
             while (compareDateStrings(currentDate, today) == -1)
             {
-                _logger.LogTrace("target date {} found for date {}", currentDate, date);
-                dates.Add(currentDate);
+                DateTime dt = GetDateTimeFromString(currentDate);
+
+                if (dt.DayOfWeek != DayOfWeek.Saturday && dt.DayOfWeek != DayOfWeek.Sunday)
+				{
+                    _logger.LogTrace("target date {} found for date {}", currentDate, date);
+                    dates.Add(currentDate);
+                }
                 currentDate = GetNextDateString(currentDate);
             }
 
