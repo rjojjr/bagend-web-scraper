@@ -27,6 +27,7 @@ namespace bagend_web_scraper.StockMarket.Client
             attributes.Add(new EventAttribute("Low", response.Low.ToString()));
             attributes.Add(new EventAttribute("Open", response.Open.ToString()));
             attributes.Add(new EventAttribute("Volume", response.Volume.ToString()));
+            attributes.Add(new EventAttribute("Symbol", response.Symbol.ToString()));
 
             return attributes;
 		}

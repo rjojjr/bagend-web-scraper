@@ -23,6 +23,9 @@ namespace bagend_web_scraper.StockMarket.Client
         [JsonPropertyName("volume")]
         public decimal Volume { get; set; } = 0!;
 
+        [JsonPropertyName("symbol")]
+        public string Symbol { get; set; } = null!;
+
         public PolygonOpenCloseApiResponse()
 		{
 		}
