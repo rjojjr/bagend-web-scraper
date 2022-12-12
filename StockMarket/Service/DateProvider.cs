@@ -22,9 +22,7 @@ namespace bagend_web_scraper.StockMarket.Service
 			var currentDate = GetNextDateString(date);
             while (compareDateStrings(currentDate, today) == -1)
             {
-                DateTime dt = GetDateTimeFromString(currentDate);
-
-                if (dt.DayOfWeek != DayOfWeek.Saturday && dt.DayOfWeek != DayOfWeek.Sunday)
+                if (IsWeekDay(currentDate))
 				{
                     _logger.LogTrace("target date {} found for date {}", currentDate, date);
                     dates.Add(currentDate);
@@ -48,6 +46,13 @@ namespace bagend_web_scraper.StockMarket.Service
 		private string GetDateString(DateTime dateTime)
 		{
             return dateTime.Year + "-" + padNumber(dateTime.Month) + "-" + padNumber(dateTime.Day);
+        }
+
+		private bool IsWeekDay(string date)
+		{
+            DateTime dt = GetDateTimeFromString(date);
+
+			return dt.DayOfWeek != DayOfWeek.Saturday && dt.DayOfWeek != DayOfWeek.Sunday;
         }
 
 		private static string padNumber(int num)
