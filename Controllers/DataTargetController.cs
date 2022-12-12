@@ -34,7 +34,7 @@ namespace bagend_web_scraper.Controllers
 		}
 
         [HttpGet]
-        [Route("/operations/restart")]
+        [Route("data/target/api/v1/operations/restart")]
         public void RestartDataOperations()
         {
             _logger.LogInformation("received request to restart ticker data operations");
