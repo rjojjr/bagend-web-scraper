@@ -1,6 +1,6 @@
 ﻿using System;
 using bagend_web_scraper.StockMarket.Model;
-using bagend_web_scraper.StockMarket.Operations;
+using bagend_web_scraper.StockMarket.OpenClose;
 using bagend_web_scraper.StockMarket.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,17 +14,17 @@ namespace bagend_web_scraper.Controllers
 
         private readonly ILogger<DataTargetController> _logger;
 		private TickerDataTargetService _tickerDataTargetService;
-		private readonly OperationProcessor _operationProcessor;
+		private readonly OpenCloseStockDataScraper _openCloseStockDataScraper;
 
 
         public DataTargetController(ILogger<DataTargetController> logger,
             TickerDataTargetService tickerDataTargetService,
-            OperationProcessor operationProcessor)
+            OpenCloseStockDataScraper openCloseStockDataScraper)
 		{
 			_logger = logger;
 			_tickerDataTargetService = tickerDataTargetService;
-			_operationProcessor = operationProcessor;
-		}
+            _openCloseStockDataScraper = openCloseStockDataScraper;
+        }
 
         [HttpPost]
 		public TickerDataTarget SubmitNewTickerDataTarget(CreateTickerDataTargetRequest request)
@@ -38,7 +38,7 @@ namespace bagend_web_scraper.Controllers
         public void RestartDataOperations()
         {
             _logger.LogInformation("received request to restart ticker data operations");
-            _operationProcessor.StartOperationProcessingThread();
+            _openCloseStockDataScraper.RestartOperationsQueue();
         }
     }
 }

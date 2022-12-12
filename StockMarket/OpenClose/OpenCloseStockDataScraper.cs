@@ -26,6 +26,12 @@ namespace bagend_web_scraper.StockMarket.OpenClose
 			_throttledOperationProcessor.StartOperationProcessingThread();
 		}
 
+		public void RestartOperationsQueue()
+		{
+			_logger.LogInformation("restarting open/close operations queue");
+			_throttledOperationProcessor.StartOperationProcessingThread();
+		}
+
 		public void ScheduleScrapeDataOperation(string stockTicker, string date, ThreadStart successCallBack, ThreadStart failureCallBack)
 		{
             _logger.LogInformation("scheduling scrape stock data for ticker {} at {}", stockTicker, date);
