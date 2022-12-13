@@ -33,12 +33,27 @@ namespace bagend_web_scraper.Controllers
 			return _tickerDataTargetService.createTarget(request);
 		}
 
+        [HttpGet]
+        public TickerDataTargetResults GetTickerDataTargets()
+        {
+            _logger.LogInformation("received request to fetch ticker data targets");
+            var results = _tickerDataTargetService.GetTargets();
+            return new TickerDataTargetResults(results.Count(), results);
+        }
+
         [HttpPatch]
         [Route("operations/restart")]
         public void RestartDataOperations()
         {
             _logger.LogInformation("received request to restart ticker data operations");
             _stockDataScraper.RestartScraperThread();
+        }
+
+        [HttpPatch]
+        public TickerDataTarget UpdateTickerDataTarget(TickerDataTarget tickerDataTarget)
+        {
+            _logger.LogInformation("received request to update ticker data target {}", tickerDataTarget.Id);
+            return _tickerDataTargetService.updateTarget(tickerDataTarget);
         }
     }
 }

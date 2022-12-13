@@ -1,6 +1,7 @@
 ﻿using System;
 using bagend_web_scraper.Repository;
 using bagend_web_scraper.StockMarket.Entity;
+using bagend_web_scraper.StockMarket.Exception;
 using bagend_web_scraper.StockMarket.Model;
 using bagend_web_scraper.StockMarket.OpenClose;
 using bagend_web_scraper.Timer;
@@ -27,9 +28,21 @@ namespace bagend_web_scraper.StockMarket.Service
 			var saved = createTarget(entity);
 
 			return TickerDataTarget.FromEntity(saved);
-		}
+        }
 
-		public IList<TickerDataTargetEntity> GetTargetsForScraping()
+        public IList<TickerDataTarget> GetTargets()
+        {
+            var entities = _tickerDataTargetEntityRepository.GetAsync().Result;
+			var results = new List<TickerDataTarget>();
+			foreach(TickerDataTargetEntity entity in entities)
+			{
+				results.Add(TickerDataTarget.FromEntity(entity));
+			}
+
+			return results;
+        }
+
+        public IList<TickerDataTargetEntity> GetTargetsForScraping()
 		{
 			return _tickerDataTargetEntityRepository.GetNextWorkAsync().Result;
 		}
@@ -43,7 +56,23 @@ namespace bagend_web_scraper.StockMarket.Service
             _logger.LogInformation("done saving updated ticker data target {}, took {} millis", dataTargetEntity.Id, timer.getTimeElasped());
         }
 
-		private TickerDataTargetEntity createTarget(TickerDataTargetEntity tickerDataTargetEntity)
+        public TickerDataTarget updateTarget(TickerDataTarget tickerDataTarget)
+        {
+            _logger.LogInformation("saving updated ticker data target {}", tickerDataTarget.Id);
+            var timer = Timer.Timer.TimerFactory(true);
+			var found = _tickerDataTargetEntityRepository.GetAsync(tickerDataTarget.Id).Result;
+			if(found != null)
+			{
+                updateTargetEntity(found, tickerDataTarget);
+                var entity = found.withCurrentDateTimeAsUpdateTimestamp();
+                _tickerDataTargetEntityRepository.UpdateAsync(entity.Id, entity).Wait();
+                _logger.LogInformation("done saving updated ticker data target {}, took {} millis", tickerDataTarget.Id, timer.getTimeElasped());
+				return TickerDataTarget.FromEntity(entity);
+            }
+			throw new TargetNotFoundException(tickerDataTarget.Id);
+        }
+
+        private TickerDataTargetEntity createTarget(TickerDataTargetEntity tickerDataTargetEntity)
 		{
 			_logger.LogInformation("saving ticker data target {}", tickerDataTargetEntity.Id);
 			var timer = Timer.Timer.TimerFactory(true);
@@ -66,6 +95,19 @@ namespace bagend_web_scraper.StockMarket.Service
 
 			return entity;
 		}
+
+		private static void updateTargetEntity(TickerDataTargetEntity entity, TickerDataTarget tickerDataTarget)
+		{
+            entity.Id = tickerDataTarget.Id;
+            entity.Priority = tickerDataTarget.Priority;
+            entity.TickerSymbol = tickerDataTarget.TickerSymbol;
+            entity.CompanyName = tickerDataTarget.CompanyName;
+            entity.BusinessSector = tickerDataTarget.BusinessSector;
+            entity.IsStarted = tickerDataTarget.IsStarted;
+            entity.IsCompleted = tickerDataTarget.IsCompleted;
+            entity.IsActive = tickerDataTarget.IsActive;
+            entity.LastDatapointTimeValue = tickerDataTarget.LastDatapointTimeValue;
+        }
 	}
 }
 

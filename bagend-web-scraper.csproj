@@ -26,6 +26,7 @@
     <None Remove="StockMarket\Client\Model\" />
     <None Remove="StockMarket\OpenClose\" />
     <None Remove="StockMarket\Operations\" />
+    <None Remove="StockMarket\Exception\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="StockMarket\Model\" />
@@ -36,5 +37,6 @@
     <Folder Include="StockMarket\Client\Model\" />
     <Folder Include="StockMarket\OpenClose\" />
     <Folder Include="StockMarket\Operations\" />
+    <Folder Include="StockMarket\Exception\" />
   </ItemGroup>
 </Project>
