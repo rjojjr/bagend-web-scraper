@@ -1,5 +1,5 @@
 ﻿using System;
-namespace bagend_web_scraper.StockMarket.Exception
+namespace bagend_web_scraper.StockMarket.Exceptions
 {
 	public class TargetNotFoundException : SystemException
     {

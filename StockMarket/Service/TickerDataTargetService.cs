@@ -1,7 +1,7 @@
 ﻿using System;
 using bagend_web_scraper.Repository;
 using bagend_web_scraper.StockMarket.Entity;
-using bagend_web_scraper.StockMarket.Exception;
+using bagend_web_scraper.StockMarket.Exceptions;
 using bagend_web_scraper.StockMarket.Model;
 using bagend_web_scraper.StockMarket.OpenClose;
 using bagend_web_scraper.Timer;
