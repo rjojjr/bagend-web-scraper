@@ -36,7 +36,7 @@ namespace bagend_web_scraper.Controllers
         [HttpPost]
 		public IActionResult SubmitNewTickerDataTarget(CreateTickerDataTargetRequest request)
 		{
-            return ExecuteWithExceptionHandler<IActionResult>(() => {
+            return ExecuteWithExceptionHandler(() => {
                 _logger.LogInformation("received request to create new {} ticker data target {}", request.BusinessSector, request.TickerSymbol);
 
                 return Created(".", _tickerDataTargetService.createTarget(request));
@@ -52,7 +52,7 @@ namespace bagend_web_scraper.Controllers
         [HttpGet]
         public IActionResult GetTickerDataTargets()
         {
-            return ExecuteWithExceptionHandler<IActionResult>(() => {
+            return ExecuteWithExceptionHandler(() => {
                 _logger.LogInformation("received request to fetch ticker data targets");
                 var results = _tickerDataTargetService.GetTargets();
                 return Ok(new TickerDataTargetResults(results.Count(), results));
@@ -69,7 +69,7 @@ namespace bagend_web_scraper.Controllers
         [Route("operations/restart")]
         public IActionResult RestartDataOperations()
         {
-            return ExecuteWithExceptionHandler<IActionResult>(() => {
+            return ExecuteWithExceptionHandler(() => {
                 _logger.LogInformation("received request to restart ticker data operations");
                 _stockDataScraper.RestartScraperThread();
                 return Ok();
@@ -85,7 +85,7 @@ namespace bagend_web_scraper.Controllers
         [HttpPatch]
         public IActionResult UpdateTickerDataTarget(TickerDataTarget tickerDataTarget)
         {
-            return ExecuteWithExceptionHandler<IActionResult>(() => {
+            return ExecuteWithExceptionHandler(() => {
                 _logger.LogInformation("received request to update ticker data target {}", tickerDataTarget.Id);
                 return Ok(_tickerDataTargetService.updateTarget(tickerDataTarget));
             });

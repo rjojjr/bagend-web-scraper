@@ -9,6 +9,11 @@ namespace bagend_web_scraper.Controllers
 	public class BaseController : ControllerBase
 	{
 
+        public IActionResult ExecuteWithExceptionHandler(Func<IActionResult> func)
+        {
+            return (IActionResult)ExecuteWithExceptionHandler(func);
+        }
+
         public T ExecuteWithExceptionHandler<T>(Func<T> func)
         {
             try
