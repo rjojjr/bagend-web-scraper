@@ -5,6 +5,11 @@ namespace bagend_web_scraper.StockMarket.Model
 {
 	public class TickerDataTarget
 	{
+
+        /// <summary>
+        /// Automatically assigned UUID Primary key for DB document.
+        /// </summary>
+        /// <example>2ee4616c-187b-40ed-9db1-403e38ae34d7</example>
         public string Id { get; set; } = null!;
 
         public int Priority { get; set; } = 100;

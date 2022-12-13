@@ -30,11 +30,13 @@ namespace bagend_web_scraper.Controllers
         /// <summary>
         /// Saves new stocker ticker data target.
         /// </summary>
+        /// <description>Saves a new stocker ticker data target. NOTE: This new target will not be in the operation queue.</description>
         /// <remarks></remarks>
         /// <response code="201">Stocker ticker data target created</response>
         /// <response code="500">Something went wrong</response>
         [HttpPost]
-		public IActionResult SubmitNewTickerDataTarget(CreateTickerDataTargetRequest request)
+        [ApiExplorerSettings(GroupName = "v1")]
+        public IActionResult SubmitNewTickerDataTarget(CreateTickerDataTargetRequest request)
 		{
             return ExecuteWithExceptionHandler(() => {
                 _logger.LogInformation("received request to create new {} ticker data target {}", request.BusinessSector, request.TickerSymbol);
@@ -50,6 +52,7 @@ namespace bagend_web_scraper.Controllers
         /// <response code="200">Success</response>
         /// <response code="500">Something went wrong</response>
         [HttpGet]
+        [ApiExplorerSettings(GroupName = "v1")]
         public IActionResult GetTickerDataTargets()
         {
             return ExecuteWithExceptionHandler(() => {
@@ -67,6 +70,7 @@ namespace bagend_web_scraper.Controllers
         /// <response code="500">Something went wrong</response>
         [HttpPatch]
         [Route("operations/restart")]
+        [ApiExplorerSettings(GroupName = "v1")]
         public IActionResult RestartDataOperations()
         {
             return ExecuteWithExceptionHandler(() => {
@@ -81,8 +85,10 @@ namespace bagend_web_scraper.Controllers
         /// </summary>
         /// <remarks></remarks>
         /// <response code="200">Stocker ticker data target updated successfully</response>
+        /// <response code="404">No target found with provided id</response>
         /// <response code="500">Something went wrong</response>
         [HttpPatch]
+        [ApiExplorerSettings(GroupName = "v1")]
         public IActionResult UpdateTickerDataTarget(TickerDataTarget tickerDataTarget)
         {
             return ExecuteWithExceptionHandler(() => {
