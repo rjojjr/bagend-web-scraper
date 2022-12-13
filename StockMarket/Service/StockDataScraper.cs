@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using bagend_web_scraper.StockMarket.Entity;
 using bagend_web_scraper.StockMarket.OpenClose;
+using bagend_web_scraper.StockMarket.Operations;
 using bagend_web_scraper.Threads;
 
 namespace bagend_web_scraper.StockMarket.Service
@@ -15,6 +16,7 @@ namespace bagend_web_scraper.StockMarket.Service
 		private readonly DateProvider _dateProvider;
 		private readonly TickerDataTargetService _tickerDataTargetService;
         private readonly ILogger<StockDataScraper> _logger;
+        private readonly OperationProcessor _operationProcessor;
 
 		private readonly ThreadTracker _scraperThreadTracker;
         private Thread _scraperThread;
@@ -22,17 +24,20 @@ namespace bagend_web_scraper.StockMarket.Service
         public StockDataScraper(OpenCloseStockDataScraper openCloseStockDataScraper,
 			DateProvider dateProvider,
 			TickerDataTargetService tickerDataTargetService,
-			ILogger<StockDataScraper> logger)
+            OperationProcessor operationProcessor,
+            ILogger<StockDataScraper> logger)
 		{
 			_openCloseStockDataScraper = openCloseStockDataScraper;
 			_dateProvider = dateProvider;
 			_tickerDataTargetService = tickerDataTargetService;
+            _operationProcessor = operationProcessor;
 			_logger = logger;
 			_scraperThreadTracker = new ThreadTracker();
 		}
 
 		public void RunScraperThread()
 		{
+            _operationProcessor.ResetQueue();
 			_logger.LogInformation("starting stock data scraper thread...");
             ThreadStart threadDelegate = new ThreadStart(() =>
             {
@@ -50,6 +55,7 @@ namespace bagend_web_scraper.StockMarket.Service
             });
             _scraperThread = new Thread(threadDelegate);
             _scraperThread.Start();
+            _operationProcessor.StartOperationProcessingThread();
 		}
 
         public void RestartScraperThread()

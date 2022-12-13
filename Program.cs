@@ -2,6 +2,7 @@ using bagend_web_scraper.Config;
 using bagend_web_scraper.Repository;
 using bagend_web_scraper.StockMarket.Client;
 using bagend_web_scraper.StockMarket.OpenClose;
+using bagend_web_scraper.StockMarket.Operations;
 using bagend_web_scraper.StockMarket.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,7 @@ builder.Services.AddSingleton<TickerDataTargetService>();
 builder.Services.AddSingleton<PolygonApiRESTClient>();
 builder.Services.AddSingleton<EventApiRESTClient>();
 builder.Services.AddSingleton<PolygonApiResponseProcessor>();
+builder.Services.AddSingleton<OperationProcessor, ThrottledFIFOOperationProcessor>();
 builder.Services.AddSingleton<OpenCloseStockDataScraper>();
 builder.Services.AddSingleton<StockDataScraper>();
 builder.Services.AddSingleton<IHostedService, StockDataScrapingService>();

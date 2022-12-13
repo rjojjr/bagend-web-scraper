@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using bagend_web_scraper.Config;
+using Microsoft.Extensions.Options;
 
 namespace bagend_web_scraper.StockMarket.Operations
 {
@@ -10,15 +12,20 @@ namespace bagend_web_scraper.StockMarket.Operations
 		private long _throttlePeriod { get; set; } = 0;
 		private int _maxQueueSize { get; set; } = 0;
 		private  Thread _processingThread { get; set; } = null!;
-		private readonly ConcurrentQueue<ThreadStart> _operationQueue;
+		private ConcurrentQueue<ThreadStart> _operationQueue;
 		private readonly ILogger<ThrottledFIFOOperationProcessor> _logger;
 
-        public ThrottledFIFOOperationProcessor(long throttlePeriod, int maxQueueSize)
+        public ThrottledFIFOOperationProcessor(IOptions<PolygonApiConfig> polygonApiConfig)
 		{
-			_throttlePeriod = throttlePeriod;
-			_maxQueueSize = maxQueueSize;
-			_operationQueue = new ConcurrentQueue<ThreadStart>();
-			_logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger<ThrottledFIFOOperationProcessor>();
+			_throttlePeriod = polygonApiConfig.Value.ThrottleMilliseconds;
+			_maxQueueSize = 1000;
+            _operationQueue = new ConcurrentQueue<ThreadStart>();
+            _logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger<ThrottledFIFOOperationProcessor>();
+        }
+
+		public void ResetQueue()
+		{
+            _operationQueue = new ConcurrentQueue<ThreadStart>();
         }
 
 		public void QueueOperation(ThreadStart operation)

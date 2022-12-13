@@ -16,13 +16,14 @@ namespace bagend_web_scraper.StockMarket.OpenClose
 		public OpenCloseStockDataScraper(ILogger<OpenCloseStockDataScraper> logger,
 			PolygonApiResponseProcessor polygonApiResponseProcessor,
             PolygonApiRESTClient polygonApiRESTClient,
-            EventApiRESTClient eventApiRESTClient)
+            EventApiRESTClient eventApiRESTClient,
+            OperationProcessor throttledOperationProcessor)
 		{
 			_logger = logger;
 			_polygonApiResponseProcessor = polygonApiResponseProcessor;
 			_polygonApiRESTClient = polygonApiRESTClient;
 			_eventApiRESTClient = eventApiRESTClient;
-			_throttledOperationProcessor = new ThrottledFIFOOperationProcessor(_polygonApiRESTClient.GetThrottlePeriod(), 10000);
+			_throttledOperationProcessor = throttledOperationProcessor;
 			_throttledOperationProcessor.StartOperationProcessingThread();
 		}
 
