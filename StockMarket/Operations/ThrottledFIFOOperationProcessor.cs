@@ -18,7 +18,7 @@ namespace bagend_web_scraper.StockMarket.Operations
         public ThrottledFIFOOperationProcessor(IOptions<PolygonApiConfig> polygonApiConfig)
 		{
 			_throttlePeriod = polygonApiConfig.Value.ThrottleMilliseconds;
-			_maxQueueSize = 1000;
+			_maxQueueSize = polygonApiConfig.Value.MaxQueueLength;
             _operationQueue = new ConcurrentQueue<ThreadStart>();
             _logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger<ThrottledFIFOOperationProcessor>();
         }
