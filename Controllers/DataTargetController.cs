@@ -28,14 +28,13 @@ namespace bagend_web_scraper.Controllers
         }
 
         /// <summary>
-        /// Submits new stocker ticker data target.
+        /// Saves new stocker ticker data target.
         /// </summary>
         /// <remarks></remarks>
         /// <response code="201">Stocker ticker data target created</response>
-        /// <response code="400">Product has missing/invalid values</response>
-        /// <response code="500">Oops! Can't create your product right now</response>
+        /// <response code="500">Something went wrong</response>
         [HttpPost]
-		public IActionResult SubmitNewTickerDataTarget(HttpRequestMessage httpRequest, CreateTickerDataTargetRequest request)
+		public IActionResult SubmitNewTickerDataTarget(CreateTickerDataTargetRequest request)
 		{
             return ExecuteWithExceptionHandler<IActionResult>(() => {
                 _logger.LogInformation("received request to create new {} ticker data target {}", request.BusinessSector, request.TickerSymbol);
@@ -44,6 +43,12 @@ namespace bagend_web_scraper.Controllers
             });
 		}
 
+        /// <summary>
+        /// Fetches all saved stocker ticker data target.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <response code="200">Success</response>
+        /// <response code="500">Something went wrong</response>
         [HttpGet]
         public IActionResult GetTickerDataTargets()
         {
@@ -54,6 +59,12 @@ namespace bagend_web_scraper.Controllers
             });
         }
 
+        /// <summary>
+        /// Restarts data scraping operations. Should be called after submitting new data targets.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <response code="200">Data scraping operations restarted</response>
+        /// <response code="500">Something went wrong</response>
         [HttpPatch]
         [Route("operations/restart")]
         public IActionResult RestartDataOperations()
@@ -65,6 +76,12 @@ namespace bagend_web_scraper.Controllers
             });
         }
 
+        /// <summary>
+        /// Updates an existing ticker data target.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <response code="200">Stocker ticker data target updated successfully</response>
+        /// <response code="500">Something went wrong</response>
         [HttpPatch]
         public IActionResult UpdateTickerDataTarget(TickerDataTarget tickerDataTarget)
         {
