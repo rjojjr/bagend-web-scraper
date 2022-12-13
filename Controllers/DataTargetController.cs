@@ -33,7 +33,7 @@ namespace bagend_web_scraper.Controllers
 			return _tickerDataTargetService.createTarget(request);
 		}
 
-        [HttpGet]
+        [HttpPatch]
         [Route("operations/restart")]
         public void RestartDataOperations()
         {
