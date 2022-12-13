@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using bagend_web_scraper.StockMarket.Model;
 using bagend_web_scraper.StockMarket.OpenClose;
 using bagend_web_scraper.StockMarket.Service;
@@ -9,8 +10,8 @@ namespace bagend_web_scraper.Controllers
 
     [ApiController]
     [Route("data/target/api/v1")]
-    public class DataTargetController
-	{
+    public class DataTargetController : BaseController
+    {
 
         private readonly ILogger<DataTargetController> _logger;
 		private TickerDataTargetService _tickerDataTargetService;
@@ -26,34 +27,51 @@ namespace bagend_web_scraper.Controllers
             _stockDataScraper = openCloseStockDataScraper;
         }
 
+        /// <summary>
+        /// Submits new stocker ticker data target.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <response code="201">Stocker ticker data target created</response>
+        /// <response code="400">Product has missing/invalid values</response>
+        /// <response code="500">Oops! Can't create your product right now</response>
         [HttpPost]
-		public TickerDataTarget SubmitNewTickerDataTarget(CreateTickerDataTargetRequest request)
+		public IActionResult SubmitNewTickerDataTarget(HttpRequestMessage httpRequest, CreateTickerDataTargetRequest request)
 		{
-			_logger.LogInformation("received request to create new {} ticker data target {}", request.BusinessSector, request.TickerSymbol);
-			return _tickerDataTargetService.createTarget(request);
+            return ExecuteWithExceptionHandler<IActionResult>(() => {
+                _logger.LogInformation("received request to create new {} ticker data target {}", request.BusinessSector, request.TickerSymbol);
+
+                return Created(".", _tickerDataTargetService.createTarget(request));
+            });
 		}
 
         [HttpGet]
-        public TickerDataTargetResults GetTickerDataTargets()
+        public IActionResult GetTickerDataTargets()
         {
-            _logger.LogInformation("received request to fetch ticker data targets");
-            var results = _tickerDataTargetService.GetTargets();
-            return new TickerDataTargetResults(results.Count(), results);
+            return ExecuteWithExceptionHandler<IActionResult>(() => {
+                _logger.LogInformation("received request to fetch ticker data targets");
+                var results = _tickerDataTargetService.GetTargets();
+                return Ok(new TickerDataTargetResults(results.Count(), results));
+            });
         }
 
         [HttpPatch]
         [Route("operations/restart")]
-        public void RestartDataOperations()
+        public IActionResult RestartDataOperations()
         {
-            _logger.LogInformation("received request to restart ticker data operations");
-            _stockDataScraper.RestartScraperThread();
+            return ExecuteWithExceptionHandler<IActionResult>(() => {
+                _logger.LogInformation("received request to restart ticker data operations");
+                _stockDataScraper.RestartScraperThread();
+                return Ok();
+            });
         }
 
         [HttpPatch]
-        public TickerDataTarget UpdateTickerDataTarget(TickerDataTarget tickerDataTarget)
+        public IActionResult UpdateTickerDataTarget(TickerDataTarget tickerDataTarget)
         {
-            _logger.LogInformation("received request to update ticker data target {}", tickerDataTarget.Id);
-            return _tickerDataTargetService.updateTarget(tickerDataTarget);
+            return ExecuteWithExceptionHandler<IActionResult>(() => {
+                _logger.LogInformation("received request to update ticker data target {}", tickerDataTarget.Id);
+                return Ok(_tickerDataTargetService.updateTarget(tickerDataTarget));
+            });
         }
     }
 }
