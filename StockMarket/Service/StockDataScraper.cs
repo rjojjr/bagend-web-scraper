@@ -70,9 +70,17 @@ namespace bagend_web_scraper.StockMarket.Service
             if(_scraperThread != null)
             {
                 _logger.LogInformation("stopping scraper thread");
-                _scraperThread.Interrupt();
+                try
+                {
+                    _scraperThread.Interrupt();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("error interupting stock scraper thread {}", e.Message);
+                }
                 _scraperThread = null;
             }
+            _scraperThreadTracker.DeactivateThread();
         }
 
 
