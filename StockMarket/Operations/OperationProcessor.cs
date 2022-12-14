@@ -5,6 +5,8 @@ namespace bagend_web_scraper.StockMarket.Operations
 	{
         void QueueOperation(ThreadStart operation);
 
+        int GetQueueSize();
+
         void StartOperationProcessingThread();
 
         void StopOperationrocessingThread();

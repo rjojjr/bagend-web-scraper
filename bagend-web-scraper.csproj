@@ -23,7 +23,6 @@
     <None Remove="StockMarket\Repository\" />
     <None Remove="StockMarket\Service\" />
     <None Remove="Timer\" />
-    <None Remove="StockMarket\Client\" />
     <None Remove="StockMarket\Client\Model\" />
     <None Remove="StockMarket\OpenClose\" />
     <None Remove="StockMarket\Operations\" />
@@ -33,7 +32,6 @@
     <Folder Include="StockMarket\Repository\" />
     <Folder Include="StockMarket\Service\" />
     <Folder Include="Timer\" />
-    <Folder Include="StockMarket\Client\" />
     <Folder Include="StockMarket\Client\Model\" />
     <Folder Include="StockMarket\OpenClose\" />
     <Folder Include="StockMarket\Operations\" />

@@ -47,6 +47,13 @@ namespace bagend_web_scraper.StockMarket.Service
 			return _tickerDataTargetEntityRepository.GetNextWorkAsync().Result;
 		}
 
+		public TickerDataTarget GetDataTarget(string stockTicker)
+		{
+			var entity = _tickerDataTargetEntityRepository.GetByStockTickerAsync(stockTicker).Result;
+
+            return TickerDataTarget.FromEntity(entity);
+		}
+
 		public void updateTarget(TickerDataTargetEntity dataTargetEntity)
 		{
             _logger.LogInformation("saving updated ticker data target {}", dataTargetEntity.Id);

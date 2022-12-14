@@ -45,6 +45,11 @@ namespace bagend_web_scraper.StockMarket.Operations
 			return _operationQueue.ToList();
 		}
 
+		public int GetQueueSize()
+		{
+			return _operationQueue.Count();
+		}
+
 		public void StartOperationProcessingThread()
 		{
 			_logger.LogInformation("starting operation processing thread");

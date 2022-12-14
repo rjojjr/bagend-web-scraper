@@ -63,6 +63,24 @@ namespace bagend_web_scraper.Controllers
         }
 
         /// <summary>
+        /// Fetches saved stocker ticker data target.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <response code="200">Success</response>
+        /// <response code="500">Something went wrong</response>
+        [HttpGet]
+        [Route("target")]
+        [ApiExplorerSettings(GroupName = "v1")]
+        public IActionResult GetTickerDataTarget(string stockTicker)
+        {
+            return ExecuteWithExceptionHandler(() => {
+                _logger.LogInformation("received request to fetch ticker data target {]", stockTicker);
+                var results = _tickerDataTargetService.GetDataTarget(stockTicker);
+                return Ok(results);
+            });
+        }
+
+        /// <summary>
         /// Restarts data scraping operations. Should be called after submitting new data targets.
         /// </summary>
         /// <remarks></remarks>

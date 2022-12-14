@@ -28,8 +28,13 @@ namespace bagend_web_scraper.Repository
 
         public async Task<TickerDataTargetEntity?> GetAsync(string id) =>
         await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
         public async Task CreateAsync(TickerDataTargetEntity newEvent) =>
         await _collection.InsertOneAsync(newEvent);
+
+        public async Task<TickerDataTargetEntity?> GetByStockTickerAsync(string stockTicker) =>
+        await _collection.Find(x => x.TickerSymbol == stockTicker).FirstOrDefaultAsync();
+
 
         public async Task UpdateAsync(string id, TickerDataTargetEntity updatedEvent) =>
             await _collection.ReplaceOneAsync(x => x.Id == id, updatedEvent);
