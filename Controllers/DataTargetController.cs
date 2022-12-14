@@ -81,6 +81,24 @@ namespace bagend_web_scraper.Controllers
         }
 
         /// <summary>
+        /// Fetches sixe of operations queue.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <response code="200">Success</response>
+        /// <response code="500">Something went wrong</response>
+        [HttpGet]
+        [Route("queue/size")]
+        [ApiExplorerSettings(GroupName = "v1")]
+        public IActionResult GetOpereationsQueueSize()
+        {
+            return ExecuteWithExceptionHandler(() => {
+                _logger.LogInformation("received request to get operations queue size");
+                var results = _tickerDataTargetService.GetOperationQueueSize();
+                return Ok(results);
+            });
+        }
+
+        /// <summary>
         /// Restarts data scraping operations. Should be called after submitting new data targets.
         /// </summary>
         /// <remarks></remarks>

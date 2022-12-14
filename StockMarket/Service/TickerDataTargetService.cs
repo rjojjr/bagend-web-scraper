@@ -4,6 +4,7 @@ using bagend_web_scraper.StockMarket.Entity;
 using bagend_web_scraper.StockMarket.Exceptions;
 using bagend_web_scraper.StockMarket.Model;
 using bagend_web_scraper.StockMarket.OpenClose;
+using bagend_web_scraper.StockMarket.Operations;
 using bagend_web_scraper.Timer;
 
 namespace bagend_web_scraper.StockMarket.Service
@@ -12,12 +13,15 @@ namespace bagend_web_scraper.StockMarket.Service
 	{
 
 		private readonly TickerDataTargetEntityRepository _tickerDataTargetEntityRepository;
+		private readonly OperationProcessor _operationProcessor;
         private readonly ILogger<TickerDataTargetService> _logger;
 
         public TickerDataTargetService(TickerDataTargetEntityRepository tickerDataTargetEntityRepository,
+            OperationProcessor operationProcessor,
             ILogger<TickerDataTargetService> logger)
 		{
 			_tickerDataTargetEntityRepository = tickerDataTargetEntityRepository;
+			_operationProcessor = operationProcessor;
 			_logger = logger;
 		}
 
@@ -78,6 +82,11 @@ namespace bagend_web_scraper.StockMarket.Service
             }
 			throw new TargetNotFoundException(tickerDataTarget.Id);
         }
+
+		public int GetOperationQueueSize()
+		{
+			return _operationProcessor.GetQueueSize();
+		}
 
         private TickerDataTargetEntity createTarget(TickerDataTargetEntity tickerDataTargetEntity)
 		{
