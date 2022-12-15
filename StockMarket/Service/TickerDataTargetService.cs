@@ -43,6 +43,11 @@ namespace bagend_web_scraper.StockMarket.Service
 			return TickerDataTarget.FromEntity(saved);
         }
 
+		public IList<string> GetTickers()
+		{
+			return _tickerDataTargetEntityRepository.GetTickersAsync().Result;
+        }
+
         public IList<TickerDataTarget> GetTargets()
         {
             var entities = _tickerDataTargetEntityRepository.GetAsync().Result;

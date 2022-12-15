@@ -63,6 +63,23 @@ namespace bagend_web_scraper.Controllers
         }
 
         /// <summary>
+        /// Fetches all saved stocker tickers.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <response code="200">Success</response>
+        /// <response code="500">Something went wrong</response>
+        [HttpGet("tickers")]
+        [ApiExplorerSettings(GroupName = "v1")]
+        public IActionResult GetTickers()
+        {
+            return ExecuteWithExceptionHandler(() => {
+                _logger.LogInformation("received request to fetch tickers");
+                var results = _tickerDataTargetService.GetTickers();
+                return Ok(results);
+            });
+        }
+
+        /// <summary>
         /// Fetches saved stocker ticker data target.
         /// </summary>
         /// <remarks></remarks>
