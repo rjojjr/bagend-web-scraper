@@ -8,6 +8,20 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var policyName = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: policyName,
+                      builder =>
+                      {
+                          builder
+                            .WithOrigins("http://localhost:3000") // specifying the allowed origin
+                            .WithMethods("GET", "POST", "PATCH") // defining the allowed HTTP method
+                            .AllowAnyHeader(); // allowing any header to be sent
+                      });
+});
+
 builder.Services.Configure<MongoDbConfig>(
     builder.Configuration.GetSection("MongoDbConfig"));
 builder.Services.Configure<PolygonApiConfig>(
@@ -60,7 +74,5 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors("*");
-
+app.UseCors(policyName);
 app.Run();
