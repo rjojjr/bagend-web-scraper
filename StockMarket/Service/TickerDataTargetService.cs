@@ -27,7 +27,16 @@ namespace bagend_web_scraper.StockMarket.Service
 
 		public TickerDataTarget createTarget(CreateTickerDataTargetRequest request)
 		{
-			var entity = createTargetEntity(request);
+
+
+            var tickers = _tickerDataTargetEntityRepository.GetTickersAsync().Result;
+
+            if (tickers.Contains(request.TickerSymbol))
+			{
+				throw new Exception($"ticker {request.TickerSymbol} already exists");
+			}
+
+            var entity = createTargetEntity(request);
 
 			var saved = createTarget(entity);
 
@@ -92,6 +101,7 @@ namespace bagend_web_scraper.StockMarket.Service
 		{
 			_logger.LogInformation("saving ticker data target {}", tickerDataTargetEntity.Id);
 			var timer = Timer.Timer.TimerFactory(true);
+
 			var entity = tickerDataTargetEntity.withCurrentDateTimeAsCreationTimestamp();
 			entity.LastUpdatedAt = entity.TargetCreatedAt;
 

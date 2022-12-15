@@ -26,6 +26,9 @@ namespace bagend_web_scraper.Repository
         public async Task<List<TickerDataTargetEntity>> GetNextWorkAsync() =>
            await _collection.Find(_ => true).SortBy(x => x.Priority).ThenBy(x => x.LastUpdatedAt).ToListAsync();
 
+        public async Task<List<string>> GetTickersAsync() =>
+           await _collection.Find(_ => true).SortBy(x => x.Priority).ThenBy(x => x.LastUpdatedAt).Project(x => x.TickerSymbol).ToListAsync();
+
         public async Task<TickerDataTargetEntity?> GetAsync(string id) =>
         await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
