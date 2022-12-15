@@ -5,7 +5,7 @@ namespace bagend_web_scraper.StockMarket.Model
 	{
 
 		public int ResultsCount { get; set; }
-		public IList<TickerDataTarget> Results = new List<TickerDataTarget>();
+		public IList<TickerDataTarget> Results { get; set; } = new List<TickerDataTarget>();
 
 		public TickerDataTargetResults(int resultsCount, IList<TickerDataTarget> results)
 		{
