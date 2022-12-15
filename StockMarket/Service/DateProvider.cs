@@ -1,14 +1,56 @@
 ﻿using System;
+using bagend_web_scraper.StockMarket.Client;
+
 namespace bagend_web_scraper.StockMarket.Service
 {
 	public class DateProvider
 	{
 
 		private readonly ILogger<DateProvider> _logger;
+		private readonly EventApiRESTClient _eventApiRESTClient;
 
-        public DateProvider(ILogger<DateProvider> logger)
+        public DateProvider(ILogger<DateProvider> logger,
+            EventApiRESTClient polygonApiRESTClient)
         {
 			_logger = logger;
+			_eventApiRESTClient = polygonApiRESTClient;
+        }
+
+		public IList<string> FilterExistingEvents(IList<string> dates, string tickerSymbol)
+		{
+			var polygons = _eventApiRESTClient.GetEventsByAttributeValue("Symbol", tickerSymbol);
+			var existing = ExtractDates(polygons.Results);
+			var newDates = new List<string>();
+			foreach(string date in dates)
+			{
+				if(!existing.Contains(date))
+				{
+					newDates.Add(date);
+				}
+			}
+			return newDates;
+		}
+
+        public IList<string> ExtractDates(IList<EventRequest> responses)
+        {
+            var dates = new List<string>();
+            foreach (EventRequest resp in responses)
+            {
+                dates.Add(extractEventAttribute("Symbol", resp));
+            }
+            return dates;
+        }
+
+        private static string extractEventAttribute(string attributeName, EventRequest genericEvent)
+        {
+            foreach (EventAttribute attribute in genericEvent.EventAttributes)
+            {
+                if (attribute.EventAttributeName.ToLower().Equals(attributeName.ToLower()))
+                {
+                    return attribute.EventAttributeValue.EventAttributeValue;
+                }
+            }
+            return null;
         }
 
 

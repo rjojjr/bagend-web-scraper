@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Cryptography.Xml;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using bagend_web_scraper.Config;
+using bagend_web_scraper.StockMarket.Client.Model;
 using Microsoft.Extensions.Options;
 using RestSharp;
 
@@ -14,6 +17,7 @@ namespace bagend_web_scraper.StockMarket.Client
         private readonly ILogger<PolygonApiRESTClient> _logger;
         private readonly IOptions<PolygonApiConfig> _apiConfig;
         private readonly RestClient _restClient;
+        private PolygonOpenCloseApiResponse _lastResponse = new PolygonOpenCloseApiResponse();
 
         public PolygonApiRESTClient(IOptions<PolygonApiConfig> apiConfig, ILogger<PolygonApiRESTClient> logger)
 		{
@@ -33,11 +37,33 @@ namespace bagend_web_scraper.StockMarket.Client
 
         public PolygonOpenCloseApiResponse GetOpenClose(string tickerSymbol, string date)
         {
-            _logger.LogInformation("fetching stock data for ticker {} on {}", tickerSymbol, date);
-            var timer = Timer.Timer.TimerFactory(true);
-            var result = GetOpenCloseAsync(tickerSymbol, date).Result;
-            _logger.LogInformation("done fetching stock data for ticker {} on {}, took {} millis", tickerSymbol, date, timer.getTimeElasped());
-            return result;
+            try
+            {
+                _logger.LogInformation("fetching stock data for ticker {} on {}", tickerSymbol, date);
+                var timer = Timer.Timer.TimerFactory(true);
+                var result = GetOpenCloseAsync(tickerSymbol, date).Result;
+
+                if(result.From == null)
+                {
+                    throw new Exception();
+                }
+
+                _logger.LogInformation("done fetching stock data for ticker {} on {}, took {} millis", tickerSymbol, date, timer.getTimeElasped());
+                _lastResponse = result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                if (_lastResponse.Symbol != null && _lastResponse.Symbol.Equals(tickerSymbol))
+                {
+                    _lastResponse.From = date;
+                    return _lastResponse;
+                }
+                _lastResponse = new PolygonOpenCloseApiResponse();
+                _lastResponse.Symbol = tickerSymbol;
+                _lastResponse.From = date;
+                return _lastResponse;
+            }
         }
 
         public long GetThrottlePeriod()

@@ -70,7 +70,8 @@ namespace bagend_web_scraper.StockMarket.OpenClose
             }
 			catch (Exception e)
 			{
-				_logger.LogError("error scraping and processing stock data {}", e.Message);
+				_logger.LogError("{} error scraping and processing stock data {}", e.GetType(), e.Message);
+				
 			}
 			return false;
 		}

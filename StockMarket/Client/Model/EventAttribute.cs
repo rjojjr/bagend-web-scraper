@@ -9,6 +9,8 @@ namespace bagend_web_scraper.StockMarket.Client
         public string EventAttributeName { get; set; } = null!;
         [JsonPropertyName("eventAttributeValue")]
         public DefaultEventAttributeValue EventAttributeValue { get; set; } = null!;
+
+        public EventAttribute() { }
         
         public EventAttribute(string eventAttributeName, string eventAttributeValue)
 		{
