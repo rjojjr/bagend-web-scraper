@@ -47,7 +47,7 @@ namespace bagend_web_scraper.StockMarket.OpenClose
                 entities.AddRange(_polygonApiResponseProcessor.ProcessPolygonTickerDataRespons(response));
             }
 
-           var savedEntities = new List<TickerDataTargetEntity>():
+            var savedEntities = new List<TickerDataTargetEntity>();
             foreach (TickerDataTargetEntity entity in entities)
             {
                 try
