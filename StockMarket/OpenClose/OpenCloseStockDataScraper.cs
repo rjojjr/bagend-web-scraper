@@ -41,13 +41,13 @@ namespace bagend_web_scraper.StockMarket.OpenClose
 
 		private bool ScrapeData(string stockTicker, string date, ThreadStart successCallBack, ThreadStart failureCallBack)
 		{
-			_logger.LogInformation("scraping stock data for ticker {} at {}", stockTicker, date);
+			_logger.LogDebug("scraping stock data for ticker {} at {}", stockTicker, date);
 			var timer = Timer.Timer.TimerFactory(true);
 			var result = ScrapeAndProcessTickerDataPoint(stockTicker, date);
 			var timeElapsed = timer.getTimeElasped();
 			if (result)
 			{
-				_logger.LogInformation("done scraping stock data for ticker {} at {}, took {} millis", stockTicker, date, timeElapsed);
+				_logger.LogDebug("done scraping stock data for ticker {} at {}, took {} millis", stockTicker, date, timeElapsed);
 				InvokeCallBack(successCallBack);
 			}
 			else
