@@ -49,20 +49,19 @@ namespace bagend_web_scraper.StockMarket.Client
                 }
 
                 _logger.LogInformation("done fetching stock data for ticker {} on {}, took {} millis", tickerSymbol, date, timer.getTimeElasped());
-                _lastResponse = result;
                 return result;
             }
             catch (Exception e)
             {
-                if (_lastResponse.Symbol != null && _lastResponse.Symbol.Equals(tickerSymbol))
-                {
-                    _lastResponse.From = date;
-                    return _lastResponse;
-                }
-                _lastResponse = new PolygonOpenCloseApiResponse();
-                _lastResponse.Symbol = tickerSymbol;
-                _lastResponse.From = date;
-                return _lastResponse;
+                //if (_lastResponse.Symbol != null && _lastResponse.Symbol.Equals(tickerSymbol))
+                //{
+                //    _lastResponse.From = date;
+                //    return _lastResponse;
+                //}
+                //_lastResponse = new PolygonOpenCloseApiResponse();
+                //_lastResponse.Symbol = tickerSymbol;
+                //_lastResponse.From = date;
+                return new PolygonOpenCloseApiResponse(tickerSymbol, date);
             }
         }
 
@@ -101,7 +100,7 @@ namespace bagend_web_scraper.StockMarket.Client
         private async Task<PolygonOpenCloseApiResponse> GetOpenCloseAsync(string tickerSymbol, string date)
         {
             var request = new RestRequest("/v1/open-close/" + tickerSymbol + "/" + date + "?apiKey=" + _apiConfig.Value.ApiKey);
-            return await _restClient.GetAsync<PolygonOpenCloseApiResponse>(request);
+            return await _restClient.GetAsync<PolygonOpenCloseApiResponse>(request).;
         }
 
         private async Task<PolygonTickerDataResponse> GetTickersAsync()

@@ -32,6 +32,12 @@ namespace bagend_web_scraper.StockMarket.Client
         public PolygonOpenCloseApiResponse()
 		{
 		}
-	}
+
+        public PolygonOpenCloseApiResponse(string symbol, string from)
+        {
+            Symbol = symbol;
+            From = from;
+        }
+    }
 }
 
