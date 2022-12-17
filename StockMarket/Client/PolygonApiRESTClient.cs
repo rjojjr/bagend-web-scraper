@@ -106,7 +106,7 @@ namespace bagend_web_scraper.StockMarket.Client
 
         private async Task<PolygonTickerDataResponse> GetTickersAsync()
         {
-            var request = new RestRequest("/v3/reference/tickers?type=CS&market=stocks&active=true&apiKey=" + _apiConfig.Value.ApiKey);
+            var request = new RestRequest("/v3/reference/tickers?type=CS&market=stocks&active=true&limit=1000&apiKey=" + _apiConfig.Value.ApiKey);
             return await _restClient.GetAsync<PolygonTickerDataResponse>(request);
         }
 
