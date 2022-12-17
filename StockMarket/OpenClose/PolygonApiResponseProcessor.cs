@@ -2,7 +2,6 @@
 using bagend_web_scraper.StockMarket.Client.Model;
 using bagend_web_scraper.StockMarket.Entity;
 using bagend_web_scraper.StockMarket.Service;
-using static bagend_web_scraper.StockMarket.Client.Model.PolygonTickerDataResponse;
 
 namespace bagend_web_scraper.StockMarket.Client
 {

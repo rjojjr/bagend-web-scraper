@@ -66,7 +66,7 @@ namespace bagend_web_scraper.Controllers
         }
 
         /// <summary>
-        /// Fetches all saved stocker ticker data target.
+        /// Fetch all active US stock tickers and save them as targets.
         /// </summary>
         /// <remarks></remarks>
         /// <response code="200">Success</response>

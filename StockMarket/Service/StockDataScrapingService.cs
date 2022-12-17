@@ -20,7 +20,7 @@ namespace bagend_web_scraper.StockMarket.Service
         { 
             await Task.Run(() =>
             {
-                _stockDataScraper.RunScraperThread();
+                //_stockDataScraper.RunScraperThread();
             });
         }
 

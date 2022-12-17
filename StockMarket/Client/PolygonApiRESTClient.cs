@@ -66,9 +66,31 @@ namespace bagend_web_scraper.StockMarket.Client
             }
         }
 
-        public PolygonTickerDataResponse GetTickers()
+        public IList<PolygonTickerDataResponse> GetTickers()
         {
-            return GetTickersAsync().Result;
+            _logger.LogInformation("fetching all stock tickers");
+            var timer = Timer.Timer.TimerFactory(true);
+            var responses = new List<PolygonTickerDataResponse>();
+            var resp = GetTickersAsync().Result;
+            responses.Add(resp);
+            while(resp.NextUrl != null && resp.NextUrl != "")
+            {
+                _logger.LogInformation("fetching next stock tickers");
+               try
+                {
+                    resp = GetNextTickers(resp.NextUrl.Split("https://api.polygon.io")[1]).Result;
+                    responses.Add(resp);
+                }
+                catch (Exception e)
+                { 
+                    _logger.LogError("error fetching next items");
+                    _logger.LogError(e.StackTrace);
+                    break;
+                }
+            }
+
+            _logger.LogInformation("done fetching all stock tickers, took {} millis", timer.getTimeElasped());
+            return responses;
         }
 
         public long GetThrottlePeriod()
@@ -84,7 +106,13 @@ namespace bagend_web_scraper.StockMarket.Client
 
         private async Task<PolygonTickerDataResponse> GetTickersAsync()
         {
-            var request = new RestRequest("/get/v3/reference/tickers?type=CS&market=stocks&active=true?apiKey=" + _apiConfig.Value.ApiKey);
+            var request = new RestRequest("/v3/reference/tickers?type=CS&market=stocks&active=true&apiKey=" + _apiConfig.Value.ApiKey);
+            return await _restClient.GetAsync<PolygonTickerDataResponse>(request);
+        }
+
+        private async Task<PolygonTickerDataResponse> GetNextTickers(string url)
+        {
+            var request = new RestRequest(url + "&apiKey=" + _apiConfig.Value.ApiKey);
             return await _restClient.GetAsync<PolygonTickerDataResponse>(request);
         }
     }

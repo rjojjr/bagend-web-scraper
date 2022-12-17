@@ -1,7 +1,8 @@
 ﻿using System;
 using bagend_web_scraper.Repository;
 using bagend_web_scraper.StockMarket.Client;
-using static bagend_web_scraper.StockMarket.Client.Model.PolygonTickerDataResponse;
+using bagend_web_scraper.StockMarket.Client.Model;
+using bagend_web_scraper.StockMarket.Entity;
 
 namespace bagend_web_scraper.StockMarket.OpenClose
 {
@@ -24,27 +25,60 @@ namespace bagend_web_scraper.StockMarket.OpenClose
             _tickerDataTargetEntityRepository = tickerDataTargetEntityRepository;
         }
 
-        public int ScrapeStockTickers()
+        public ScrapeTickersResponse ScrapeStockTickers()
         {
-            var response = _polygonApiRESTClient.GetTickers();
 
-            var filtered = new List<TickerResult>();
-            foreach(TickerResult tickerResult in response.Results)
+            var entities =  new List<TickerDataTargetEntity>();
+            var responses = _polygonApiRESTClient.GetTickers();
+
+           foreach(PolygonTickerDataResponse response in responses)
             {
-                if(tickerResult.Locale == "us")
+                var filtered = new List<TickerResult>();
+                foreach (TickerResult tickerResult in response.Results)
                 {
-                    filtered.Add(tickerResult);
+                    if (tickerResult.Locale == "us")
+                    {
+                        filtered.Add(tickerResult);
+                    }
                 }
+
+                response.Results = filtered;
+
+                entities.AddRange(_polygonApiResponseProcessor.ProcessPolygonTickerDataRespons(response));
             }
 
-            response.Results = filtered;
+           var savedEntities = new List<TickerDataTargetEntity>():
+            foreach (TickerDataTargetEntity entity in entities)
+            {
+                try
+                {
+                    _tickerDataTargetEntityRepository.CreateAsync(entity).Wait();
+                    savedEntities.Add(entity);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("an error occured while saving ", e.StackTrace);
+                }
 
-            var entities = _polygonApiResponseProcessor.ProcessPolygonTickerDataRespons(response);
-
-
-            _tickerDataTargetEntityRepository.CreateMany(entities);
-            return entities.Count();
+            }
+            return new ScrapeTickersResponse(savedEntities.Count(), entities.Count() - savedEntities.Count());
         }
+    }
+
+    public class ScrapeTickersResponse
+    {
+        public ScrapeTickersResponse(int added, int failed)
+        {
+            Added = added;
+            Failed = failed;
+        }
+
+        public ScrapeTickersResponse()
+        {
+        }
+
+        public int Added { get; set; }
+        public int Failed { get; set; }
     }
 }
 
