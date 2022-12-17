@@ -7,6 +7,7 @@ namespace bagend_web_scraper.Config
         public string ApiKey { get; set; } = null!;
 		public long ThrottleMilliseconds { get; set; } = 0;
         public int MaxQueueLength { get; set; } = 0;
+        public int MaxThreads { get; set; } = 1;
 
         public PolygonApiConfig()
 		{

@@ -11,6 +11,7 @@ namespace bagend_web_scraper.StockMarket.Operations
 		private long _lastStart { get; set; } = 0;
 		private long _throttlePeriod { get; set; } = 0;
 		private int _maxQueueSize { get; set; } = 0;
+		private int _maxThreads { get; set; } = 1;
 		private  Thread _processingThread { get; set; } = null!;
 		private ConcurrentQueue<ThreadStart> _operationQueue;
 		private readonly ILogger<ThrottledFIFOOperationProcessor> _logger;
@@ -19,6 +20,8 @@ namespace bagend_web_scraper.StockMarket.Operations
 		{
 			_throttlePeriod = polygonApiConfig.Value.ThrottleMilliseconds;
 			_maxQueueSize = polygonApiConfig.Value.MaxQueueLength;
+			var threads = polygonApiConfig.Value.MaxThreads;
+			_maxThreads = threads > 0 ? threads : 1;
             _operationQueue = new ConcurrentQueue<ThreadStart>();
             _logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger<ThrottledFIFOOperationProcessor>();
         }
@@ -32,7 +35,7 @@ namespace bagend_web_scraper.StockMarket.Operations
 		{
 			if(GetSize() >= _maxQueueSize)
 			{
-				_logger.LogWarning("cannot add operation to queue because queue is full. waiting for room to open up");
+				_logger.LogDebug("cannot add operation to queue because queue is full. waiting for room to open up");
                 Thread.Sleep(500);
 				QueueOperation(operation);
 				return;
@@ -68,50 +71,91 @@ namespace bagend_web_scraper.StockMarket.Operations
             }
         }
 
+		private ThreadStart threadFactory(Action action, Action callback)
+		{
+			var job = () =>
+			{
+				action.Invoke();
+				callback.Invoke();
+			};
+
+			return new ThreadStart(job);
+        }
+
+		private void executeThread(Action action, Action callback)
+		{
+			new Thread(threadFactory(action, callback)).Start();
+		}
+
 		private void StartOperationProcessing()
 		{
-			var remainingMillis = GetRemainingMillis();
-			if(remainingMillis <= 0)
+			Action callback = null;
+			callback = () => executeThread(() => {
+                _logger.LogDebug("processing next job in the queue");
+                ProcessNextOperation();
+            }, callback);
+
+
+
+            var remainingMillis = GetRemainingMillis();
+
+			var threads = new ThreadStart[_maxThreads];
+			foreach(ThreadStart ts in threads)
 			{
-				if(GetSize() > 0)
-				{
-					_logger.LogInformation("processing next operation in the queue");
-                    ProcessNextOperation();
-                    StartOperationProcessing();
-                }
-				else
-				{
-					Thread.Sleep(500);
-				}
-				
+				callback.Invoke();
 			}
-			else
-			{
-				Thread.Sleep(((int)remainingMillis));
-			}
-            StartOperationProcessing();
         }
 
 		private void ProcessNextOperation()
 		{
-			if(GetSize() > 0)
+
+			var process = () =>
 			{
-                ThreadStart operation = null;
-                if (_operationQueue.TryDequeue(out operation))
+				ThreadStart operation = null;
+				if (_operationQueue.TryDequeue(out operation))
                 {
                     operation.Invoke();
-                    _lastStart = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 }
-                else
+				else
                 {
+					_logger.LogWarning("failed to fetch operation from queue");
+                    Thread.Sleep(50);
                     ProcessNextOperation();
-                }
+				}
+			};
+
+			if(GetSize() > 0)
+			{
+				if(GetRemainingMillis() <= 0)
+                {
+                    lock (this)
+                    {
+                        _lastStart = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    }
+                    process.Invoke();
+				}
+				else
+				{
+					Thread.Sleep(50);
+					ProcessNextOperation();
+				}
+
+            }
+            else
+            {
+                Thread.Sleep(50);
+                ProcessNextOperation();
             }
         }
 
 		private long GetRemainingMillis()
 		{
-			var currentElapsedTime = DateTimeOffset.Now.ToUnixTimeMilliseconds() - _lastStart;
+			long currentElapsedTime = 0;
+
+            lock (this)
+			{
+                currentElapsedTime = DateTimeOffset.Now.ToUnixTimeMilliseconds() - _lastStart;
+            }
 
 			return _throttlePeriod - currentElapsedTime;
 		}
