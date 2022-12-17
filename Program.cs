@@ -41,6 +41,7 @@ builder.Services.AddSingleton<PolygonApiResponseProcessor>();
 builder.Services.AddSingleton<OperationProcessor, ThrottledFIFOOperationProcessor>();
 builder.Services.AddSingleton<OpenCloseStockDataScraper>();
 builder.Services.AddSingleton<StockDataScraper>();
+builder.Services.AddSingleton<TickerDataScraper>();
 builder.Services.AddSingleton<IHostedService, StockDataScrapingService>();
 
 builder.Services.AddControllers();
