@@ -1,5 +1,8 @@
 ﻿using System;
+using bagend_web_scraper.StockMarket.Client.Model;
+using bagend_web_scraper.StockMarket.Entity;
 using bagend_web_scraper.StockMarket.Service;
+using static bagend_web_scraper.StockMarket.Client.Model.PolygonTickerDataResponse;
 
 namespace bagend_web_scraper.StockMarket.Client
 {
@@ -22,6 +25,23 @@ namespace bagend_web_scraper.StockMarket.Client
 			eventRequest.EventAttributes = BuildEventAttributes(response);
 
 			return eventRequest;
+		}
+
+		public IList<TickerDataTargetEntity> ProcessPolygonTickerDataRespons(PolygonTickerDataResponse response)
+		{
+			var entities = new List<TickerDataTargetEntity>();
+			foreach(TickerResult tickerResult in response.Results)
+			{
+                var entity = new TickerDataTargetEntity();
+                entity.Priority = 100;
+                entity.TickerSymbol = tickerResult.Ticker;
+                entity.CompanyName = tickerResult.Name;
+                entity.BusinessSector = "UNKNOWN";
+
+				entities.Add(entity);
+            }
+			return entities;
+
 		}
 
 		private IList<EventAttribute> BuildEventAttributes(PolygonOpenCloseApiResponse response)

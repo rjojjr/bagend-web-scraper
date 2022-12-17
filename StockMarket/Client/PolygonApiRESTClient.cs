@@ -66,6 +66,11 @@ namespace bagend_web_scraper.StockMarket.Client
             }
         }
 
+        public PolygonTickerDataResponse GetTickers()
+        {
+            return GetTickersAsync().Result;
+        }
+
         public long GetThrottlePeriod()
         {
             return _apiConfig.Value.ThrottleMilliseconds;
@@ -75,6 +80,12 @@ namespace bagend_web_scraper.StockMarket.Client
         {
             var request = new RestRequest("/v1/open-close/" + tickerSymbol + "/" + date + "?apiKey=" + _apiConfig.Value.ApiKey);
             return await _restClient.GetAsync<PolygonOpenCloseApiResponse>(request);
+        }
+
+        private async Task<PolygonTickerDataResponse> GetTickersAsync()
+        {
+            var request = new RestRequest("/get/v3/reference/tickers?type=CS&market=stocks&active=true?apiKey=" + _apiConfig.Value.ApiKey);
+            return await _restClient.GetAsync<PolygonTickerDataResponse>(request);
         }
     }
 }

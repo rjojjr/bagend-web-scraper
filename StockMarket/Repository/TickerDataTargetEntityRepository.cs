@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using bagend_web_scraper.Config;
 using bagend_web_scraper.StockMarket.Entity;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
 namespace bagend_web_scraper.Repository
@@ -18,6 +19,8 @@ namespace bagend_web_scraper.Repository
         {
             _collection = mongoContext.GetMongoDatabase().GetCollection<TickerDataTargetEntity>(
                 CollectionName);
+            _collection.Indexes
+                .CreateOne(new CreateIndexModel<TickerDataTargetEntity>(new IndexKeysDefinitionBuilder<TickerDataTargetEntity>().Ascending("TickerSymbol"), new CreateIndexOptions() { Unique = true }));
         } 
 
         public async Task<List<TickerDataTargetEntity>> GetAsync() =>
@@ -34,6 +37,9 @@ namespace bagend_web_scraper.Repository
 
         public async Task CreateAsync(TickerDataTargetEntity newEvent) =>
         await _collection.InsertOneAsync(newEvent);
+
+        public void CreateMany(IList<TickerDataTargetEntity> newEvent) =>
+             _collection.InsertMany(newEvent);
 
         public async Task<TickerDataTargetEntity?> GetByStockTickerAsync(string stockTicker) =>
         await _collection.Find(x => x.TickerSymbol == stockTicker).FirstOrDefaultAsync();

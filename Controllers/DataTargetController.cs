@@ -16,15 +16,18 @@ namespace bagend_web_scraper.Controllers
         private readonly ILogger<DataTargetController> _logger;
 		private TickerDataTargetService _tickerDataTargetService;
 		private readonly StockDataScraper _stockDataScraper;
+        private readonly TickerDataScraper _tickerDataScraper;
 
 
         public DataTargetController(ILogger<DataTargetController> logger,
             TickerDataTargetService tickerDataTargetService,
-            StockDataScraper openCloseStockDataScraper)
+            StockDataScraper openCloseStockDataScraper,
+            TickerDataScraper tickerDataScraper)
 		{
 			_logger = logger;
 			_tickerDataTargetService = tickerDataTargetService;
             _stockDataScraper = openCloseStockDataScraper;
+            _tickerDataScraper = tickerDataScraper;
         }
 
         /// <summary>
@@ -59,6 +62,23 @@ namespace bagend_web_scraper.Controllers
                 _logger.LogInformation("received request to fetch ticker data targets");
                 var results = _tickerDataTargetService.GetTargets();
                 return Ok(new TickerDataTargetResults(results.Count(), results));
+            });
+        }
+
+        /// <summary>
+        /// Fetches all saved stocker ticker data target.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <response code="200">Success</response>
+        /// <response code="500">Something went wrong</response>
+        [HttpGet("tickers/scrape")]
+        [ApiExplorerSettings(GroupName = "v1")]
+        public IActionResult ScrapeTickerDataTargets()
+        {
+            return ExecuteWithExceptionHandler(() => {
+                _logger.LogInformation("received request to fetch ticker data targets");
+                var results = _tickerDataScraper.ScrapeStockTickers();
+                return Ok(results);
             });
         }
 
