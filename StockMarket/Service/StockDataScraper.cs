@@ -117,7 +117,7 @@ namespace bagend_web_scraper.StockMarket.Service
 
         private void ProcessAndUpdateTargetStatus(TickerDataTargetEntity entity, IList<string> dates)
         {
-            _logger.LogInformation("updating status for target {}", entity.TickerSymbol);
+            _logger.LogDebug("updating status for target {}", entity.TickerSymbol);
             entity.IsActive = dates.Count() > 0 ? true : false;
             entity.IsStarted = true;
             entity.IsCompleted = dates.Count() == 0 ? true : false;
