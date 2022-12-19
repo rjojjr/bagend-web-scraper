@@ -36,7 +36,7 @@ namespace bagend_web_scraper.StockMarket.Operations
 			if(GetSize() >= _maxQueueSize)
 			{
 				_logger.LogDebug("cannot add operation to queue because queue is full. waiting for room to open up");
-                Thread.Sleep(500);
+                Thread.Sleep(50);
 				QueueOperation(operation);
 				return;
             }
