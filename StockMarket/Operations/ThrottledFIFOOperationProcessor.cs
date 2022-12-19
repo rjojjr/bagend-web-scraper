@@ -8,6 +8,8 @@ namespace bagend_web_scraper.StockMarket.Operations
 	public class ThrottledFIFOOperationProcessor : OperationProcessor
 	{
 
+		private const int WaitForSpaceInQueuePeriod = 10;
+
 		private long _lastStart { get; set; } = 0;
 		private long _throttlePeriod { get; set; } = 0;
 		private int _maxQueueSize { get; set; } = 0;
@@ -36,7 +38,7 @@ namespace bagend_web_scraper.StockMarket.Operations
 			if(GetSize() >= _maxQueueSize)
 			{
 				_logger.LogDebug("cannot add operation to queue because queue is full. waiting for room to open up");
-                Thread.Sleep(50);
+                Thread.Sleep(WaitForSpaceInQueuePeriod);
 				QueueOperation(operation);
 				return;
             }
@@ -136,7 +138,7 @@ namespace bagend_web_scraper.StockMarket.Operations
 				}
 				else
 				{
-					Thread.Sleep(50);
+					Thread.Sleep(WaitForSpaceInQueuePeriod);
 					ProcessNextOperation();
 				}
 
@@ -150,14 +152,18 @@ namespace bagend_web_scraper.StockMarket.Operations
 
 		private long GetRemainingMillis()
 		{
-			long currentElapsedTime = 0;
-
-            lock (this)
+			if(_throttlePeriod > 0)
 			{
-                currentElapsedTime = DateTimeOffset.Now.ToUnixTimeMilliseconds() - _lastStart;
-            }
+                long currentElapsedTime = 0;
 
-			return _throttlePeriod - currentElapsedTime;
+                lock (this)
+                {
+                    currentElapsedTime = DateTimeOffset.Now.ToUnixTimeMilliseconds() - _lastStart;
+                }
+
+                return _throttlePeriod - currentElapsedTime;
+            }
+			return 0;
 		}
 
 		private int GetSize()
