@@ -31,10 +31,10 @@ namespace bagend_web_scraper.StockMarket.Client
 
         public void SubmitEvent(EventRequest eventRequest)
         {
-            _logger.LogInformation("submitting event to api stream {}", eventRequest.EventStream);
+            _logger.LogDebug("submitting event to api stream {}", eventRequest.EventStream);
             var timer = Timer.Timer.TimerFactory(true);
             SubmitEventAsync(eventRequest).Wait();
-            _logger.LogInformation("done submitting event to api stream {}, took {} millis", eventRequest.EventStream, timer.getTimeElasped());
+            _logger.LogDebug("done submitting event to api stream {}, took {} millis", eventRequest.EventStream, timer.getTimeElasped());
         }
 
         public GetEventsResponse GetEventsByAttributeValue(string attributeName, string attributeValue)

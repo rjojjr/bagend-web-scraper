@@ -74,16 +74,16 @@ namespace bagend_web_scraper.StockMarket.Service
 
 		public void updateTarget(TickerDataTargetEntity dataTargetEntity)
 		{
-            _logger.LogInformation("saving updated ticker data target {}", dataTargetEntity.Id);
+            _logger.LogDebug("saving updated ticker data target {}", dataTargetEntity.Id);
             var timer = Timer.Timer.TimerFactory(true);
 			var entity = dataTargetEntity.withCurrentDateTimeAsUpdateTimestamp();
 			_tickerDataTargetEntityRepository.UpdateAsync(entity.Id, entity).Wait();
-            _logger.LogInformation("done saving updated ticker data target {}, took {} millis", dataTargetEntity.Id, timer.getTimeElasped());
+            _logger.LogDebug("done saving updated ticker data target {}, took {} millis", dataTargetEntity.Id, timer.getTimeElasped());
         }
 
         public TickerDataTarget updateTarget(TickerDataTarget tickerDataTarget)
         {
-            _logger.LogInformation("saving updated ticker data target {}", tickerDataTarget.Id);
+            _logger.LogDebug("saving updated ticker data target {}", tickerDataTarget.Id);
             var timer = Timer.Timer.TimerFactory(true);
 			var found = _tickerDataTargetEntityRepository.GetAsync(tickerDataTarget.Id).Result;
 			if(found != null)
@@ -91,7 +91,7 @@ namespace bagend_web_scraper.StockMarket.Service
                 updateTargetEntity(found, tickerDataTarget);
                 var entity = found.withCurrentDateTimeAsUpdateTimestamp();
                 _tickerDataTargetEntityRepository.UpdateAsync(entity.Id, entity).Wait();
-                _logger.LogInformation("done saving updated ticker data target {}, took {} millis", tickerDataTarget.Id, timer.getTimeElasped());
+                _logger.LogDebug("done saving updated ticker data target {}, took {} millis", tickerDataTarget.Id, timer.getTimeElasped());
 				return TickerDataTarget.FromEntity(entity);
             }
 			throw new TargetNotFoundException(tickerDataTarget.Id);
@@ -104,14 +104,14 @@ namespace bagend_web_scraper.StockMarket.Service
 
         private TickerDataTargetEntity createTarget(TickerDataTargetEntity tickerDataTargetEntity)
 		{
-			_logger.LogInformation("saving ticker data target {}", tickerDataTargetEntity.Id);
+			_logger.LogDebug("saving ticker data target {}", tickerDataTargetEntity.Id);
 			var timer = Timer.Timer.TimerFactory(true);
 
 			var entity = tickerDataTargetEntity.withCurrentDateTimeAsCreationTimestamp();
 			entity.LastUpdatedAt = entity.TargetCreatedAt;
 
 			_tickerDataTargetEntityRepository.CreateAsync(entity).Wait();
-            _logger.LogInformation("done saving ticker data target {}, took {} millis", tickerDataTargetEntity.Id, timer.getTimeElasped());
+            _logger.LogDebug("done saving ticker data target {}, took {} millis", tickerDataTargetEntity.Id, timer.getTimeElasped());
 
 			return entity;
         }

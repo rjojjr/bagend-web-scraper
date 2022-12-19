@@ -39,7 +39,7 @@ namespace bagend_web_scraper.StockMarket.Client
         {
             try
             {
-                _logger.LogInformation("fetching stock data for ticker {} on {}", tickerSymbol, date);
+                _logger.LogDebug("fetching stock data for ticker {} on {}", tickerSymbol, date);
                 var timer = Timer.Timer.TimerFactory(true);
                 var result = GetOpenCloseAsync(tickerSymbol, date).Result;
 
@@ -48,7 +48,7 @@ namespace bagend_web_scraper.StockMarket.Client
                     throw new Exception();
                 }
 
-                _logger.LogInformation("done fetching stock data for ticker {} on {}, took {} millis", tickerSymbol, date, timer.getTimeElasped());
+                _logger.LogDebug("done fetching stock data for ticker {} on {}, took {} millis", tickerSymbol, date, timer.getTimeElasped());
                 return result;
             }
             catch (Exception e)

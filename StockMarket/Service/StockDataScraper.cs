@@ -37,6 +37,7 @@ namespace bagend_web_scraper.StockMarket.Service
 			_scraperThreadTracker = new ThreadTracker();
             _datesUntilToday = _dateProvider.GetNextDateStringsUntilToday(_startDate);
         }
+
         public void RunScraperThread()
         {
             _operationProcessor.ResetQueue();
@@ -47,13 +48,28 @@ namespace bagend_web_scraper.StockMarket.Service
                 _scraperThreadTracker.ActivateThread();
                 _logger.LogInformation("started stock data scraper thread");
                 var work = _tickerDataTargetService.GetTargetsForScraping();
-                foreach (TickerDataTargetEntity entity in work)
+                var thread1 = ((List<TickerDataTargetEntity>)work).GetRange(0, work.Count() / 2);
+                var thread2 = ((List<TickerDataTargetEntity>)work).GetRange(work.Count() / 2, work.Count() - (work.Count() / 2));
+                new Thread(new ThreadStart(() =>
                 {
-                    _logger.LogInformation("submitting target {} for scraping", entity.Id);
-                    ScrapeOpenCloseStockData(entity);
-                }
+                    foreach (TickerDataTargetEntity entity in thread1)
+                    {
+                        _logger.LogInformation("submitting target {} for scraping", entity.Id);
+                        ScrapeOpenCloseStockData(entity);
+                    }
+                })).Start();
+
+                new Thread(new ThreadStart(() =>
+                {
+                    foreach (TickerDataTargetEntity entity in thread2)
+                    {
+                        _logger.LogInformation("submitting target {} for scraping", entity.Id);
+                        ScrapeOpenCloseStockData(entity);
+                    }
+                })).Start();
                 _logger.LogInformation("stock data scraper thread finished after {} millis", timer.getTimeElasped());
                 _scraperThreadTracker.ActivateThread();
+
             });
             _scraperThread = new Thread(threadDelegate);
             _scraperThread.Start();
