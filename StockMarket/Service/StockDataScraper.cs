@@ -48,8 +48,9 @@ namespace bagend_web_scraper.StockMarket.Service
                 _scraperThreadTracker.ActivateThread();
                 _logger.LogInformation("started stock data scraper thread");
                 var work = _tickerDataTargetService.GetTargetsForScraping();
-                var thread1 = ((List<TickerDataTargetEntity>)work).GetRange(0, work.Count() / 2);
-                var thread2 = ((List<TickerDataTargetEntity>)work).GetRange(work.Count() / 2, work.Count() - (work.Count() / 2));
+                var thread1 = ((List<TickerDataTargetEntity>)work).GetRange(0, work.Count() / 3);
+                var thread2 = ((List<TickerDataTargetEntity>)work).GetRange(work.Count() / 3, (work.Count() / 3));
+                var thread3 = ((List<TickerDataTargetEntity>)work).GetRange((2 * work.Count() / 3), (work.Count() / 3));
                 new Thread(new ThreadStart(() =>
                 {
                     foreach (TickerDataTargetEntity entity in thread1)
@@ -67,6 +68,16 @@ namespace bagend_web_scraper.StockMarket.Service
                         ScrapeOpenCloseStockData(entity);
                     }
                 })).Start();
+
+                new Thread(new ThreadStart(() =>
+                {
+                    foreach (TickerDataTargetEntity entity in thread3)
+                    {
+                        _logger.LogInformation("submitting target {} for scraping", entity.Id);
+                        ScrapeOpenCloseStockData(entity);
+                    }
+                })).Start();
+
                 _logger.LogInformation("stock data scraper thread finished after {} millis", timer.getTimeElasped());
                 _scraperThreadTracker.ActivateThread();
 
