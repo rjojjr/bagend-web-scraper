@@ -45,7 +45,7 @@ namespace bagend_web_scraper.StockMarket.Service
 
         public ScraperStatus GetStatus()
         {
-            long elapsed = DateTime.UtcNow.Millisecond - started;
+            long elapsed = DateProvider.GetMillisFromDateTime(DateTime.UtcNow) - started;
             long remaining = total - completed;
 
             decimal rate = completed / elapsed;
@@ -64,7 +64,7 @@ namespace bagend_web_scraper.StockMarket.Service
                 _scraperThreadTracker.ActivateThread();
                 _logger.LogInformation("started stock data scraper thread");
                 var work = _tickerDataTargetService.GetTargetsForScraping();
-                started = DateTime.UtcNow.Millisecond;
+                started = DateProvider.GetMillisFromDateTime(DateTime.UtcNow);
                 total = work.Count();
                 var thread1 = ((List<TickerDataTargetEntity>)work).GetRange(0, work.Count() / 3);
                 var thread2 = ((List<TickerDataTargetEntity>)work).GetRange(work.Count() / 3, (work.Count() / 3));
