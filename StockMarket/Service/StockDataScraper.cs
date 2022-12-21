@@ -45,13 +45,18 @@ namespace bagend_web_scraper.StockMarket.Service
 
         public ScraperStatus GetStatus()
         {
-            long elapsed = DateProvider.GetMillisFromDateTime(DateTime.UtcNow) - started;
+            long elapsed = (long)((DateProvider.GetMillisFromDateTime(DateTime.UtcNow) - started) / 1000);
             long remaining = total - completed;
 
             decimal rate = completed / elapsed;
 
-            decimal remainingTime = ((rate * remaining * 1000) / 60);
-            return new ScraperStatus(total, completed, elapsed, rate, remainingTime);
+            decimal remainingTime = (rate * remaining / 60);
+            return new ScraperStatus(
+                total,
+                completed,
+                elapsed,
+                rate,
+                remainingTime);
         }
 
         public void RunScraperThread()
