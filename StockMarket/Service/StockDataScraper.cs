@@ -145,9 +145,10 @@ namespace bagend_web_scraper.StockMarket.Service
             var operations = new List<ThreadStart>();
 
             ProcessAndUpdateTargetStatus(entity, dates);
-            if(dates.Count == 0)
+            if(dates.Count() == 0)
             {
                 Interlocked.Increment(ref completed);
+                return;
             }
 
             foreach (string date in dates)
