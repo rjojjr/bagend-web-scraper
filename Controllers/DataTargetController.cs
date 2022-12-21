@@ -111,7 +111,7 @@ namespace bagend_web_scraper.Controllers
         public IActionResult GetTickerDataTarget(string stockTicker)
         {
             return ExecuteWithExceptionHandler(() => {
-                _logger.LogInformation("received request to fetch ticker data target {]", stockTicker);
+                _logger.LogInformation("received request to fetch ticker data target {}", stockTicker);
                 var results = _tickerDataTargetService.GetDataTarget(stockTicker);
                 return Ok(results);
             });
