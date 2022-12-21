@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using bagend_web_scraper.StockMarket.Entity;
+using bagend_web_scraper.StockMarket.Model;
 using bagend_web_scraper.StockMarket.OpenClose;
 using bagend_web_scraper.StockMarket.Operations;
 using bagend_web_scraper.Threads;
@@ -25,6 +26,7 @@ namespace bagend_web_scraper.StockMarket.Service
 
         private long total;
         private long completed;
+        private long started;
 
         public StockDataScraper(OpenCloseStockDataScraper openCloseStockDataScraper,
 			DateProvider dateProvider,
@@ -41,13 +43,15 @@ namespace bagend_web_scraper.StockMarket.Service
             _datesUntilToday = _dateProvider.GetNextDateStringsUntilToday(_startDate);
         }
 
-        public long[] GetStatus()
+        public ScraperStatus GetStatus()
         {
-            return new long[]
-            {
-                total,
-                completed
-            };
+            long elapsed = DateTime.UtcNow.Millisecond - started;
+            long remaining = total - completed;
+
+            decimal rate = completed / elapsed;
+
+            decimal remainingTime = ((rate * remaining * 1000) / 60);
+            return new ScraperStatus(total, completed, elapsed, rate, remainingTime);
         }
 
         public void RunScraperThread()
@@ -60,6 +64,7 @@ namespace bagend_web_scraper.StockMarket.Service
                 _scraperThreadTracker.ActivateThread();
                 _logger.LogInformation("started stock data scraper thread");
                 var work = _tickerDataTargetService.GetTargetsForScraping();
+                started = DateTime.UtcNow.Millisecond;
                 total = work.Count();
                 var thread1 = ((List<TickerDataTargetEntity>)work).GetRange(0, work.Count() / 3);
                 var thread2 = ((List<TickerDataTargetEntity>)work).GetRange(work.Count() / 3, (work.Count() / 3));
