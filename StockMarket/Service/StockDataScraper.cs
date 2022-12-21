@@ -48,9 +48,9 @@ namespace bagend_web_scraper.StockMarket.Service
             long elapsed = (long)((DateProvider.GetMillisFromDateTime(DateTime.UtcNow) - started) / 1000);
             long remaining = total - completed;
 
-            decimal rate = completed / elapsed;
+            float rate = ((float)completed) / elapsed;
 
-            decimal remainingTime = (rate * remaining / 60);
+            float remainingTime = ((remaining / rate) / 60);
             return new ScraperStatus(
                 total,
                 completed,

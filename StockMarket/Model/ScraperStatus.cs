@@ -7,14 +7,14 @@ namespace bagend_web_scraper.StockMarket.Model
 		public long total { get; set; }
 		public long completed { get; set; }
 		public long timeElapsed { get; set; }
-		public decimal averageRate { get; set; }
-		public decimal remainingTime { get; set; }
+		public float averageRate { get; set; }
+		public float remainingTime { get; set; }
 
 		public ScraperStatus()
 		{
 		}
 
-        public ScraperStatus(long total, long completed, long timeElapsed, decimal averageRate, decimal remainingTime)
+        public ScraperStatus(long total, long completed, long timeElapsed, float averageRate, float remainingTime)
         {
             this.total = total;
             this.completed = completed;
