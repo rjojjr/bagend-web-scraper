@@ -36,7 +36,7 @@ namespace bagend_web_scraper.StockMarket.Service
             var dates = new List<string>();
             foreach (EventRequest resp in responses)
             {
-                dates.Add(extractEventAttribute("Symbol", resp));
+                dates.Add(extractEventAttribute("Date", resp));
             }
             return dates;
         }
