@@ -148,7 +148,7 @@ namespace bagend_web_scraper.Controllers
         {
             return ExecuteWithExceptionHandler(() => {
                 _logger.LogInformation("received request to restart ticker data operations");
-                _stockDataScraper.RestartScraperThread();
+                //_stockDataScraper.RestartScraperThread();
                 return Ok();
             });
         }

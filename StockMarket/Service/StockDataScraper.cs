@@ -52,7 +52,7 @@ namespace bagend_web_scraper.StockMarket.Service
 
             float remainingTime = rate > 0 ? ((remaining / rate) / 60) : 0;
 
-            string left = rate > 0 ? $"{remainingTime / 60}hrs {remainingTime - (remainingTime / 60)}minutes" : "0hrs 0minutes";
+            string left = rate > 0 ? $"{remainingTime / 60}hrs {remainingTime - (((int)(remainingTime / 60)) * 60)}minutes" : "0hrs 0minutes";
             return new ScraperStatus(
                 total,
                 completed,
