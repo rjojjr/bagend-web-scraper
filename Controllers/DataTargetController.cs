@@ -169,6 +169,22 @@ namespace bagend_web_scraper.Controllers
                 return Ok(_tickerDataTargetService.updateTarget(tickerDataTarget));
             });
         }
+
+        /// <summary>
+        /// Get scraper status
+        /// </summary>
+        /// <remarks></remarks>
+        /// <response code="200">total / completed</response>
+        /// <response code="500">Something went wrong</response>
+        [HttpGet("status")]
+        [ApiExplorerSettings(GroupName = "v1")]
+        public IActionResult GetScraperStatus()
+        {
+            return ExecuteWithExceptionHandler(() => {
+                _logger.LogInformation("received request to get scraper status");
+                return Ok(_stockDataScraper.GetStatus());
+            });
+        }
     }
 }
 

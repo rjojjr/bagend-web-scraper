@@ -23,6 +23,9 @@ namespace bagend_web_scraper.StockMarket.Service
         private Thread _scraperThread;
         private IList<string> _datesUntilToday;
 
+        private long total;
+        private long completed;
+
         public StockDataScraper(OpenCloseStockDataScraper openCloseStockDataScraper,
 			DateProvider dateProvider,
 			TickerDataTargetService tickerDataTargetService,
@@ -38,6 +41,15 @@ namespace bagend_web_scraper.StockMarket.Service
             _datesUntilToday = _dateProvider.GetNextDateStringsUntilToday(_startDate);
         }
 
+        public long[] GetStatus()
+        {
+            return new long[]
+            {
+                total,
+                completed
+            };
+        }
+
         public void RunScraperThread()
         {
             _operationProcessor.ResetQueue();
@@ -48,6 +60,7 @@ namespace bagend_web_scraper.StockMarket.Service
                 _scraperThreadTracker.ActivateThread();
                 _logger.LogInformation("started stock data scraper thread");
                 var work = _tickerDataTargetService.GetTargetsForScraping();
+                total = work.Count();
                 var thread1 = ((List<TickerDataTargetEntity>)work).GetRange(0, work.Count() / 3);
                 var thread2 = ((List<TickerDataTargetEntity>)work).GetRange(work.Count() / 3, (work.Count() / 3));
                 var thread3 = ((List<TickerDataTargetEntity>)work).GetRange((2 * work.Count() / 3), (work.Count() / 3));
@@ -131,11 +144,13 @@ namespace bagend_web_scraper.StockMarket.Service
                         entity.IsActive = false;
                         entity.IsStarted = false;
                         entity.IsCompleted = true;
+                        Interlocked.Increment(ref completed);
                     }
                     _tickerDataTargetService.updateTarget(entity);
                 };
                 ThreadStart failureCallback = () =>
                 {
+                    Interlocked.Increment(ref completed);
                     _logger.LogError("error thrown while scraping stock data for ticker {} at date {}", entity.TickerSymbol, date);
                 };
                 _openCloseStockDataScraper.ScheduleScrapeDataOperation(entity.TickerSymbol, date, successCallback, failureCallback);
