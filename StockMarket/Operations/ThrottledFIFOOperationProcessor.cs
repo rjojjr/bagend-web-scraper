@@ -8,7 +8,7 @@ namespace bagend_web_scraper.StockMarket.Operations
 	public class ThrottledFIFOOperationProcessor : OperationProcessor
 	{
 
-		private const int WaitForSpaceInQueuePeriod = 10;
+		private const int WaitForSpaceInQueuePeriod = 50;
 
 		private long _lastStart { get; set; } = 0;
 		private long _throttlePeriod { get; set; } = 0;
@@ -145,7 +145,7 @@ namespace bagend_web_scraper.StockMarket.Operations
             }
             else
             {
-                Thread.Sleep(50);
+                Thread.Sleep(100);
                 ProcessNextOperation();
             }
         }
